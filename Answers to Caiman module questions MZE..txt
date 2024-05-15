@@ -1,0 +1,21 @@
+Answers to Caiman module questions. In addition to the coding exercises of Caiman. 
+
+
+1. What is meant by 'deconvolution' of the calcium traces? What is the aim of this procedure?
+
+The definition of deconvolution is to resolve something into its constituent elements, or removing complication. Within the caiman pipeline, deconvolution is referring to the process of extracting the neural activity from the dynamics of the calcium indicator used (the fluorescent traces). It is done by sparse non-negative deconvolution and implemented using the near online oasis algorithm. Prior to deconvolution traces are detrended o remove non stationary effects, e.g. photobleaching. Deconvolution can be difficult due to the limited axial resolution of two photon microscopy. This results in neuropil fluorescent activity that spatially overlaps. 
+
+
+2 .How does CaImAn deal with motion artifacts that are not uniform in the field of view?
+Describe the algorithm used to correct for elastic motion, and the steps it goes through. 
+
+Caiman introduces tests based on (un)supervised learning, assessing the quality of the detected components an eliminate possible false positives. Test are based on the observation that active components are bound to have distinct spatiotemporal signatures in the FOV. Motion correction and menory mapping are performed -> patch wise quality filters -> Under the influence of a seed algorithm refinement on full FOV occurs (parallelize pixel-wise and component wise), then a quality filter feeds the signal back and repeats this step. Then the signal is ready for post processing. 
+
+3. What are the constraints in the CMNF algorithm? Why are they there?
+
+CNMF - constrained nonnegative matrix factorization
+The CNMF algorithm represents the movie as the sum of spatially localized rank-one spatiotemporal components capturing neurons  and processes, plus additional non-sparse low-rank terms for the background flouresences and neuropil activity.
+
+''After motion correction the spatio-temporal activity of each source can be expressed as a rank one matrix given by the outer product of two components: a component in space that describes the spatial footprint (location and shape) of each source, and a component in time that describes the activity trace of the source''
+
+The constraints of this method are the fact that for microendoscopic data the larger integration volume leads to a more complex background contamination. Low-rank models are inadequate. Thus, a more descriptive model is required. There is another algorithm made for this type of data, the CNMF-E algorithm (E stands for endoscopic). 
